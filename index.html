@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remotech Fiber</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 2rem;
+      color: #2c3e50;
+    }
+    h1 {
+      color: #1e88e5;
+      margin-bottom: 1rem;
+    }
+    section {
+      margin-bottom: 2rem;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, textarea, select, button {
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 1rem;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: right;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .fiber-list {
+      font-size: 0.9em;
+      color: #555;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.8em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>ريموتك - إدارة شبكة الفايبر</h1>
+
+  <section>
+    <h2>إضافة صندوق جديد</h2>
+    <label>اسم الصندوق <input id="boxName" /></label>
+    <label>العنوان / الموقع <input id="boxLocation" /></label>
+    <label>ملاحظات <textarea id="boxNotes"></textarea></label>
+    <button onclick="addBox()">➕ إضافة صندوق</button>
+  </section>
+
+  <section>
+    <h2>إضافة شعرة للصندوق الحالي</h2>
+    <label>رقم الشعرة (1-12) <input id="fiberNumber" type="number" min="1" max="12" /></label>
+    <label>من أين؟ <input id="fiberFrom" /></label>
+    <label>إلى أين؟ <input id="fiberTo" /></label>
+    <label>الحالة (مربوط/احتياطي/مقطوع) <input id="fiberStatus" /></label>
+    <label>ملاحظات إضافية <input id="fiberNote" /></label>
+    <button onclick="addFiber()">🎨 إضافة شعرة</button>
+  </section>
+
+  <section>
+    <h2>جميع الصناديق</h2>
+    <table id="boxesTable">
+      <thead>
+        <tr>
+          <th>اسم الصندوق</th>
+          <th>الموقع</th>
+          <th>ملاحظات</th>
+          <th>الشعرات</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+    &copy; Remotech - Ahmad Abu Sabha - 2025
+  </footer>
+
+  <script>
+    const fiberColors = {
+      1: "أزرق", 2: "برتقالي", 3: "أخضر", 4: "بني",
+      5: "رمادي", 6: "أبيض", 7: "أحمر", 8: "أسود",
+      9: "أصفر", 10: "بنفسجي", 11: "وردي", 12: "تركواز"
+    };
+    const boxes = [];
+
+    function addBox() {
+      const name = document.getElementById("boxName").value;
+      const location = document.getElementById("boxLocation").value;
+      const notes = document.getElementById("boxNotes").value;
+      if (!name || !location) return alert("يرجى تعبئة الاسم والموقع");
+      boxes.push({ name, location, notes, fibers: [] });
+      renderTable();
+    }
+
+    function addFiber() {
+      const number = parseInt(document.getElementById("fiberNumber").value);
+      const from = document.getElementById("fiberFrom").value;
+      const to = document.getElementById("fiberTo").value;
+      const status = document.getElementById("fiberStatus").value;
+      const note = document.getElementById("fiberNote").value;
+      const color = fiberColors[number] || "غير معروف";
+      if (boxes.length === 0) return alert("أضف صندوق أولاً");
+      boxes[boxes.length - 1].fibers.push({ number, color, from, to, status, note });
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#boxesTable tbody");
+      tbody.innerHTML = "";
+      boxes.forEach(box => {
+        const fiberList = box.fibers.map(f =>
+          `<div class='fiber-list'>رقم: ${f.number}, لون: ${f.color}, من: ${f.from}, إلى: ${f.to}, حالة: ${f.status}, ملاحظة: ${f.note}</div>`
+        ).join("");
+        const row = `<tr><td>${box.name}</td><td>${box.location}</td><td>${box.notes}</td><td>${fiberList}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+  </script>
+</body>
+</html>
